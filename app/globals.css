@@ -24,3 +24,35 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 18s ease infinite;
+}
+
+@keyframes floatSlow {
+  0% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-40px) translateX(30px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+
+.animate-float-slow {
+  animation: floatSlow 22s ease-in-out infinite;
+}
+
+@keyframes floatReverse {
+  0% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(30px) translateX(-30px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+
+.animate-float-reverse {
+  animation: floatReverse 26s ease-in-out infinite;
+}
+
