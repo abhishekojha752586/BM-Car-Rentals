@@ -13,6 +13,7 @@ export default function Navbar() {
     { name: 'Packages', href: '/packages' },
     { name: 'Car Rent', href: '/tariff' },
     { name: 'Corporate', href: '/corporate' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
   ];
 
