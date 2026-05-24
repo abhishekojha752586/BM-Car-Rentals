@@ -115,7 +115,97 @@ const gradients = [
   'from-[#d4af37]/30 via-[#ff7a00]/20 to-[#3e2723]/40',
 ];
 
-export default function BlogPage() {
+import { client } from '@/sanity/lib/client';
+import { postsQuery } from '@/sanity/lib/queries';
+
+export default async function BlogPage() {
+  let blogArticles: any[] = [];
+  try {
+    if (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+      blogArticles = await client.fetch(postsQuery);
+    }
+  } catch (error) {
+    console.error("Failed to fetch posts from Sanity:", error);
+  }
+
+  // The 7 original hardcoded articles
+  const originalArticles = [
+    {
+      slug: { current: 'mumbai-to-shirdi-complete-travel-guide' },
+      title: 'Mumbai to Shirdi: The Complete Travel Guide for 2025',
+      excerpt: 'Planning a trip from Mumbai to Shirdi? Discover the best routes, travel times, and tips to make your Sai Baba pilgrimage smooth and memorable. From highway stops to darshan timings, we cover it all.',
+      category: 'Travel Guide',
+      publishedAt: '2025-05-20',
+      readTime: '8 min read',
+      featured: true,
+    },
+    {
+      slug: { current: 'top-weekend-getaways-from-mumbai' },
+      title: 'Top 10 Weekend Getaways from Mumbai by Car',
+      excerpt: 'Escape the city chaos with these stunning weekend destinations. From the misty hills of Lonavala to the serene beaches of Alibaug, find your perfect road trip just hours from Mumbai.',
+      category: 'Trip Ideas',
+      publishedAt: '2025-05-15',
+      readTime: '6 min read',
+      featured: true,
+    },
+    {
+      slug: { current: 'ashtavinayak-yatra-planning-guide' },
+      title: 'Ashtavinayak Yatra: How to Plan the Perfect Pilgrimage',
+      excerpt: 'The sacred Ashtavinayak circuit covers 8 Ganesh temples across Maharashtra. Learn the ideal route, temple timings, and how to book a comfortable cab for this divine journey.',
+      category: 'Pilgrimage',
+      publishedAt: '2025-05-10',
+      readTime: '10 min read',
+      featured: false,
+    },
+    {
+      slug: { current: 'how-to-book-a-car-rental-first-time' },
+      title: "First Time Booking a Car Rental? Here's What You Need to Know",
+      excerpt: 'From choosing the right car type to understanding pricing structures, this beginner-friendly guide helps you book your first rental car in Mumbai with complete confidence.',
+      category: 'Booking Tips',
+      publishedAt: '2025-05-05',
+      readTime: '5 min read',
+      featured: false,
+    },
+    {
+      slug: { current: 'corporate-car-rental-benefits-mumbai' },
+      title: '5 Reasons Your Mumbai Business Needs a Corporate Car Rental Partner',
+      excerpt: 'Discover how a dedicated corporate car rental service saves time, money, and stress. From airport pickups to client meetings, learn why top companies trust BM Car Rentals.',
+      category: 'Corporate',
+      publishedAt: '2025-04-28',
+      readTime: '5 min read',
+      featured: false,
+    },
+    {
+      slug: { current: 'best-road-trip-snacks-and-stops-mumbai-pune' },
+      title: 'Mumbai to Pune: Best Highway Stops, Food & Road Trip Tips',
+      excerpt: "The Mumbai-Pune Expressway is one of India's most popular routes. Discover the tastiest dhabas, cleanest restrooms, and scenic viewpoints along the way.",
+      category: 'Travel Guide',
+      publishedAt: '2025-04-20',
+      readTime: '7 min read',
+      featured: false,
+    },
+    {
+      slug: { current: 'monsoon-travel-tips-maharashtra' },
+      title: 'Monsoon Travel in Maharashtra: Safety Tips & Best Destinations',
+      excerpt: 'Maharashtra transforms during monsoons with lush waterfalls and green valleys. Learn essential safety tips and the most breathtaking monsoon destinations to visit by car.',
+      category: 'Seasonal',
+      publishedAt: '2025-04-15',
+      readTime: '6 min read',
+      featured: false,
+    }
+  ];
+
+  // Merge Sanity articles with original articles, ensuring no duplicates by slug
+  const sanitySlugs = new Set(blogArticles.map(a => a.slug?.current));
+  for (const orig of originalArticles) {
+    if (!sanitySlugs.has(orig.slug.current)) {
+      blogArticles.push(orig);
+    }
+  }
+
+  // Sort by publishedAt date descending
+  blogArticles.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
   const featuredArticles = blogArticles.filter((a) => a.featured);
 
   return (
@@ -162,8 +252,8 @@ export default function BlogPage() {
           <div className="grid gap-8 md:grid-cols-2">
             {featuredArticles.map((article, idx) => (
               <Link
-                key={article.slug}
-                href={`/blog/${article.slug}`}
+                key={article.slug.current}
+                href={`/blog/${article.slug.current}`}
                 className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
               >
                 {/* Gradient placeholder image */}
@@ -182,7 +272,7 @@ export default function BlogPage() {
                   <div className="mb-3 flex items-center gap-4 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      {article.date}
+                      {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
@@ -224,8 +314,8 @@ export default function BlogPage() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {blogArticles.map((article, idx) => (
               <Link
-                key={article.slug}
-                href={`/blog/${article.slug}`}
+                key={article.slug.current}
+                href={`/blog/${article.slug.current}`}
                 className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 {/* Gradient placeholder */}
@@ -244,7 +334,7 @@ export default function BlogPage() {
                   <div className="mb-2 flex items-center gap-4 text-xs text-gray-500">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3.5 w-3.5" />
-                      {article.date}
+                      {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
